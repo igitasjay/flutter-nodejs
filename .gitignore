@@ -1,5 +1,5 @@
 backend/node_modules
-backend/secret.js
+# backend/secret.js
 flutter_app/lib/services/ipaddress.dart
 
 
