@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_app/services/ipaddress.dart';
+import 'package:flutter_app/services/url.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
@@ -12,21 +12,24 @@ class Api {
       String name, double price, String description) async {
     final url = Uri.parse(_baseUrl);
     try {
-      final response = await http.post(url,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'name': name,
-            'price': price,
-            'descritpion': description,
-          }));
-      if (response.statusCode == 200) {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'name': name,
+          'price': price,
+          'description': description, // Fixed typo here
+        }),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         logger.i("Created successfully");
-        logger.d('create response: $response');
+        logger.d('create response: ${response.body}');
         return response;
       } else {
-        logger.e('response: $response');
+        logger.e('response: ${response.body}');
         return response;
       }
     } catch (e) {
