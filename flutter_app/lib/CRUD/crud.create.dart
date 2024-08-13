@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/services/services.api.dart';
 import 'package:flutter_app/util/util.inputfield.dart';
 import 'package:flutter_app/util/util.spacing.dart';
 
@@ -30,9 +31,19 @@ class CrudCreate extends StatelessWidget {
               ),
             ),
             SizedBox(
-                width: double.infinity,
-                child:
-                    FilledButton(onPressed: () {}, child: const Text("CREATE")))
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () async {
+                  final api = Api();
+                  await api.create(
+                    nameController.text,
+                    double.parse(priceController.text),
+                    descController.text,
+                  );
+                },
+                child: const Text("CREATE"),
+              ),
+            )
           ],
         ),
       ),

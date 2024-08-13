@@ -1,22 +1,28 @@
 import 'dart:convert';
+import 'package:flutter_app/services/ipaddress.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
 class Api {
   final logger = Logger();
-  final String _baseUrl =
-      'http://api.example.com'; // replace with your API base URL
+  final String _baseUrl = AppUrl.baseUrl; // replace with your API base URL
 
   // CRUD - Create
-  Future<http.Response> create(Map<String, dynamic> data) async {
+  Future<http.Response> create(
+      String name, double price, String description) async {
     final url = Uri.parse(_baseUrl);
     try {
       final response = await http.post(url,
           headers: {
             'Content-Type': 'application/json',
           },
-          body: jsonEncode(data));
+          body: jsonEncode({
+            'name': name,
+            'price': price,
+            'descritpion': description,
+          }));
       if (response.statusCode == 200) {
+        logger.i("Created successfully");
         logger.d('create response: $response');
         return response;
       } else {
