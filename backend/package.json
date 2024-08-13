@@ -1,0 +1,15 @@
+{
+  "name": "flutter-app-server",
+  "version": "1.0.0",
+  "description": "a flutter app with nodejs backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jay",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.5.2"
+  }
+}
