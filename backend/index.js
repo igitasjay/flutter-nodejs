@@ -15,18 +15,15 @@ app.use(
 app.use("/api/products", productRoute);
 
 //
-
-app.get("/api/products", async (req, res) => {
+app.get("/api", async (req, res) => {
   res.send("Hi from server");
 });
 
 // Variables
-
 const username = secret.mongoUsername;
 const password = secret.mongoPassword;
 
 // Connect to database (MongoDB)
-
 mongoose
   .connect(
     `mongodb+srv://${username}:${password}@crud-cluster.inlee.mongodb.net/?retryWrites=true&w=majority&appName=CRUD-Cluster`
