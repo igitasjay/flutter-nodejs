@@ -1,4 +1,5 @@
 backend/node_modules
+backend/secret.js
 
 # Miscellaneous
 flutter_app/*.class

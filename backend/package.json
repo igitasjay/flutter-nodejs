@@ -4,12 +4,18 @@
   "description": "a flutter app with nodejs backend",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "Jay",
   "license": "MIT",
   "dependencies": {
     "express": "^4.19.2",
+    "mongodb": "^6.8.0",
     "mongoose": "^8.5.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }
