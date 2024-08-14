@@ -5,6 +5,23 @@ class CrudRead extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Read Data'),
+      ),
+      body: ListView.builder(itemBuilder: (context, index) {
+        return null;
+
+        // return showDisplay(index.toString(), price, description)
+      }),
+    );
   }
+}
+
+Widget showDisplay(String name, String price, String description) {
+  return Container(
+    decoration: BoxDecoration(
+      border: Border.all(),
+    ),
+  );
 }

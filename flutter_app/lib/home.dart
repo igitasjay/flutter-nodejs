@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/CRUD/crud.create.dart';
+import 'package:flutter_app/CRUD/crud.read.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,7 +28,16 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: const Text("CREATE")),
             const SizedBox(height: 24),
-            FilledButton(onPressed: () {}, child: const Text("READ")),
+            FilledButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CrudRead(),
+                    ),
+                  );
+                },
+                child: const Text("READ")),
             const SizedBox(height: 24),
             FilledButton(onPressed: () {}, child: const Text("UPDATE")),
             const SizedBox(height: 24),
