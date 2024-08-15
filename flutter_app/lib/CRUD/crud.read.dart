@@ -1,10 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/model.product.dart';
 import 'package:flutter_app/services/services.api.dart';
 
-class CrudRead extends StatelessWidget {
+class CrudRead extends StatefulWidget {
   const CrudRead({super.key});
+
+  @override
+  State<CrudRead> createState() => _CrudReadState();
+}
+
+class _CrudReadState extends State<CrudRead> {
+  late Future<List<ProductModel>> futureProducts;
+
+  @override
+  void initState() {
+    super.initState();
+    futureProducts = ApiProvider().read();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,25 +24,27 @@ class CrudRead extends StatelessWidget {
       appBar: AppBar(
         title: const Text('CRUD - Read'),
       ),
-      body: FutureBuilder(
-        future: ApiProvider().read(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CupertinoActivityIndicator(),
-            );
-          } else {
-            List<ProductModel> product = snapshot.data;
+      body: FutureBuilder<List<ProductModel>>(
+        future: futureProducts,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
             return ListView.builder(
-              itemCount: product.length,
+              itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
+                final product = snapshot.data![index];
                 return ListTile(
                   leading: const Icon(Icons.insert_emoticon),
-                  title: Text(product[index].name!),
-                  subtitle: Text(product[index].desc!),
-                  trailing: Text("\$${product[index].price.toString()}"),
+                  title: Text(product.name),
+                  subtitle: Text(product.description),
+                  trailing: Text("\$${product.price.toString()}"),
                 );
               },
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           }
         },

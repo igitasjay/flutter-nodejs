@@ -9,7 +9,7 @@ class ApiProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
   final logger = Logger();
-  final String _baseUrl = AppUrl.baseUrl; // replace with your API base URL
+  final String _baseUrl = AppUrl.baseUrl;
 
   // CRUD - Create
   Future<http.Response> create(
@@ -26,7 +26,7 @@ class ApiProvider extends ChangeNotifier {
         body: jsonEncode({
           'name': name,
           'price': price,
-          'description': description, // Fixed typo here
+          'description': description,
         }),
       );
 
@@ -51,35 +51,28 @@ class ApiProvider extends ChangeNotifier {
   }
 
   // CRUD - Read
-  read() async {
-    List<ProductModel> products = [];
+  Future<List<ProductModel>> read() async {
     final url = Uri.parse(_baseUrl);
     try {
       final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        data["products"].forEach((value) => {
-              products.add(
-                ProductModel(
-                  name: value["name"],
-                  desc: value["description"],
-                  price: value["price"].toString(),
-                ),
-              ),
-            });
-        return products;
-        // logger.i(data);
-        // logger.d('read response: $response');
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        logger.i(response.body);
+        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
-        // return response;
+        // Extracting the list of products from the 'data' field
+        final List<dynamic> productsJson = jsonResponse['data'];
+
+        // Convert each product JSON into a ProductModel
+        return productsJson.map((data) => ProductModel.fromJson(data)).toList();
       } else {
-        logger.e('response: $response');
-        return response;
+        logger.e(
+            "Failed with status: ${response.statusCode}, body: ${response.body}");
+        throw Exception("Failed with status: ${response.statusCode}");
       }
     } catch (e) {
-      logger.e('read error: $e');
+      logger.e(e.toString());
+      throw Exception(e.toString());
     }
-    throw Exception("Something went wrong");
   }
 
   // CRUD - Update
