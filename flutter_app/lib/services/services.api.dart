@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/model.product.dart';
 import 'dart:convert';
 import 'package:flutter_app/services/url.dart';
 import 'package:http/http.dart' as http;
@@ -50,13 +51,27 @@ class ApiProvider extends ChangeNotifier {
   }
 
   // CRUD - Read
-  Future<http.Response> read(String id) async {
-    final url = Uri.parse('$_baseUrl/$id');
+  read() async {
+    List<ProductModel> products = [];
+    final url = Uri.parse(_baseUrl);
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
-        logger.d('read response: $response');
-        return response;
+        final data = jsonDecode(response.body);
+        data["products"].forEach((value) => {
+              products.add(
+                ProductModel(
+                  name: value["name"],
+                  desc: value["description"],
+                  price: value["price"].toString(),
+                ),
+              ),
+            });
+        return products;
+        // logger.i(data);
+        // logger.d('read response: $response');
+
+        // return response;
       } else {
         logger.e('response: $response');
         return response;

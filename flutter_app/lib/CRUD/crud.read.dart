@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/model.product.dart';
+import 'package:flutter_app/services/services.api.dart';
 
 class CrudRead extends StatelessWidget {
   const CrudRead({super.key});
@@ -7,21 +10,31 @@ class CrudRead extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Read Data'),
+        title: const Text('CRUD - Read'),
       ),
-      body: ListView.builder(itemBuilder: (context, index) {
-        return null;
-
-        // return showDisplay(index.toString(), price, description)
-      }),
+      body: FutureBuilder(
+        future: ApiProvider().read(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CupertinoActivityIndicator(),
+            );
+          } else {
+            List<ProductModel> product = snapshot.data;
+            return ListView.builder(
+              itemCount: product.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: const Icon(Icons.insert_emoticon),
+                  title: Text(product[index].name!),
+                  subtitle: Text(product[index].desc!),
+                  trailing: Text("\$${product[index].price.toString()}"),
+                );
+              },
+            );
+          }
+        },
+      ),
     );
   }
-}
-
-Widget showDisplay(String name, String price, String description) {
-  return Container(
-    decoration: BoxDecoration(
-      border: Border.all(),
-    ),
-  );
 }
