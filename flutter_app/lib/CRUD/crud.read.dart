@@ -6,60 +6,48 @@ class CrudRead extends StatefulWidget {
   const CrudRead({super.key});
 
   @override
-  State<CrudRead> createState() => _CrudReadState();
+  CrudReadState createState() => CrudReadState();
 }
 
-class _CrudReadState extends State<CrudRead> {
-  // late Future<Product> futureProducts;
-  final ApiProvider apiProvider = ApiProvider();
-  List<Product> products = [];
-  int page = 1;
-  bool isLoading = false;
-
-  // Future<void> fetchProducts() async {
-  //   if (isLoading) return;
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   final fetchProducts = await apiProvider.read();
-  //   setState(() {
-  //     products.addAll(fetchProducts);
-  //     page++;
-  //     isLoading = false;
-  //   });
-  // }
+class CrudReadState extends State<CrudRead> {
+  late Future<List<Product>> futureProducts;
 
   @override
   void initState() {
     super.initState();
-    apiProvider.read();
+    futureProducts = ApiProvider().read();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CRUD - Read'),
+        title: const Text('Products'),
       ),
-      body: ListView.builder(
-        itemCount: products.length + 1,
-        itemBuilder: (context, index) {
-          if (index == products.length) {
-            return isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : const SizedBox.shrink();
+      body: FutureBuilder<List<Product>>(
+        future: futureProducts,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No products found'));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                Product product = snapshot.data![index];
+                return ListTile(
+                  title: Text(product.name),
+                  subtitle: Text('${product.description} - \$${product.price}'),
+                  onTap: () {
+                    // Handle tap on product item, e.g., navigate to a details page
+                  },
+                );
+              },
+            );
           }
-          final product = products[index];
-          return ListTile(
-            leading: const Icon(Icons.emoji_emotions_outlined),
-            title: Text(product.name),
-            subtitle: Text(product.description),
-            trailing: Text(
-              product.price.toString(),
-            ),
-          );
         },
       ),
     );
