@@ -51,28 +51,29 @@ class ApiProvider extends ChangeNotifier {
   }
 
   // CRUD - Read
-  Future<List<ProductModel>> read() async {
-    final url = Uri.parse(_baseUrl);
+  Future<List<Product>> read() async {
+    String url = _baseUrl;
     try {
-      final response = await http.get(url);
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         logger.i(response.body);
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
-        // Extracting the list of products from the 'data' field
-        final List<dynamic> productsJson = jsonResponse['data'];
-
-        // Convert each product JSON into a ProductModel
-        return productsJson.map((data) => ProductModel.fromJson(data)).toList();
+        List<dynamic> data = json.decode(response.body);
+        return data.map((product) => Product.fromJson(product)).toList();
       } else {
-        logger.e(
-            "Failed with status: ${response.statusCode}, body: ${response.body}");
-        throw Exception("Failed with status: ${response.statusCode}");
+        logger.e(response.body);
+        throw Exception("Failed to load profile");
       }
     } catch (e) {
-      logger.e(e.toString());
-      throw Exception(e.toString());
+      logger.e(e);
     }
+    throw Exception("Something went wrong");
   }
 
   // CRUD - Update
