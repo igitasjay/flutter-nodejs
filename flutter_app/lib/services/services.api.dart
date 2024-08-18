@@ -14,10 +14,10 @@ class ApiProvider extends ChangeNotifier {
   // CRUD - Create
   Future<http.Response> create(
       String name, double price, String description) async {
-    _isLoading = true;
-    notifyListeners();
     final url = Uri.parse(_baseUrl);
     try {
+      _isLoading = true;
+      notifyListeners();
       final response = await http.post(
         url,
         headers: {
@@ -54,13 +54,15 @@ class ApiProvider extends ChangeNotifier {
   Future<List<Product>> read() async {
     final response = await http.get(Uri.parse(_baseUrl));
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      List<dynamic> productsJson = data['products'];
-
-      return productsJson.map((json) => Product.fromJson(json)).toList();
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      logger.i(response.body);
+      final productsList = jsonDecode(response.body);
+      final products = productsList.map((product) {
+        return Product.fromJson(product);
+      }).toList();
+      return products;
     } else {
-      throw Exception('Failed to load products');
+      throw Exception("Failed to load products");
     }
   }
 

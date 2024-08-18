@@ -15,7 +15,7 @@ class Product {
     return Product(
       id: json['_id'],
       name: json['name'],
-      price: json['price'].toDouble(),
+      price: json['price'],
       description: json['description'],
     );
   }
